@@ -2,6 +2,10 @@ import tkinter as tk
 from tkinter import filedialog, messagebox
 import cv2
 import pandas as pd
+import os
+
+# Absolute path to the CSV file
+CSV_FILE_PATH = "C:/Users/soula/Desktop/Projects/Color_reader/colors.csv"
 
 # choose an image file
 def choose_image():
@@ -22,7 +26,7 @@ def getColorName(R, G, B, csv_data):
     return closest_color
 
 # match colors from the image with colors from the CSV file
-def match_colors(image_path, csv_path):
+def match_colors(image_path):
     # Read pic
     img = cv2.imread(image_path)
     if img is None:
@@ -30,7 +34,11 @@ def match_colors(image_path, csv_path):
         return
 
     # Read CSV
-    csv_data = pd.read_csv(csv_path)
+    try:
+        csv_data = pd.read_csv(CSV_FILE_PATH)
+    except FileNotFoundError:
+        messagebox.showerror("Error", f"CSV file not found: {CSV_FILE_PATH}")
+        return
 
     # Function to handle mouse click events
     def on_mouse_click(event, x, y, flags, param):
@@ -58,7 +66,7 @@ def on_button_click():
     image_path = choose_image()
     if image_path:
         # Match colors from the image with colors from the CSV file
-        match_colors(image_path, "colors.csv")
+        match_colors(image_path)
 
 # Create the GUI
 root = tk.Tk()
